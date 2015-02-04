@@ -2785,6 +2785,13 @@ typedef struct circuit_t {
   /** Queue of cells waiting to be transmitted on n_chan */
   cell_queue_t n_chan_cells;
 
+  /** CLIENTLOGGING:
+   *  A pseudonym for this circuit.  This is used for the client logging
+   *  code.  Pseudonyms are unique across all circuits during a
+   *  single client logging session.
+   */
+  uint64_t cllog_circ_id ;
+
   /**
    * The hop to which we want to extend this circuit.  Should be NULL if
    * the circuit has attached to a channel.
@@ -3899,6 +3906,11 @@ typedef struct {
   /** If true, we try to download extra-info documents (and we serve them,
    * if we are a cache).  For authorities, this is always true. */
   int DownloadExtraInfo;
+
+  /** CLIENTLOGGING:
+   *  If true, turn on clientlogging.
+   */
+  int AllowClientLogging;
 
   /** If true, and we are acting as a relay, allow exit circuits even when
    * we are the first hop of a circuit. */
