@@ -97,7 +97,7 @@
 #define LD_HEARTBEAT (1u<<20)
 /** Abstract channel_t code */
 #define LD_CHANNEL   (1u<<21)
-y/** CLIENTLOGGING */
+/** CLIENTLOGGING */
 #define LD_CLIENTLOGGING (1u<<22)
 /** Number of logging domains in the code. */
 #define N_LOGGING_DOMAINS 23
