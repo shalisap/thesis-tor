@@ -41,6 +41,7 @@ LIBTOR_A_SOURCES = \
 	src/or/circuitmux_ewma.c			\
 	src/or/circuitstats.c				\
 	src/or/circuituse.c				\
+	src/or/clientlogging.c                          \
 	src/or/command.c				\
 	src/or/config.c					\
 	src/or/confparse.c				\
@@ -142,6 +143,7 @@ ORHEADERS = \
 	src/or/circuitmux_ewma.h			\
 	src/or/circuitstats.h				\
 	src/or/circuituse.h				\
+	src/or/clientlogging.h				\
 	src/or/command.h				\
 	src/or/config.h					\
 	src/or/confparse.h				\
