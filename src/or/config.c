@@ -131,6 +131,10 @@ static config_var_t option_vars_[] = {
   V(AccountingMax,               MEMUNIT,  "0 bytes"),
   V(AccountingStart,             STRING,   NULL),
   V(Address,                     STRING,   NULL),
+
+  /* CLIENTLOGGING: Option to turn on ClientLogging */
+  V(AllowClientLogging,          BOOL,     "1"),
+
   V(AllowDotExit,                BOOL,     "0"),
   V(AllowInvalidNodes,           CSV,      "middle,rendezvous"),
   V(AllowNonRFC953Hostnames,     BOOL,     "0"),
