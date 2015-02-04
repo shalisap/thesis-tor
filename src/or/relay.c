@@ -19,6 +19,10 @@
 #include "circuitbuild.h"
 #include "circuitlist.h"
 #include "circuituse.h"
+
+/*CLIENTLOGGING */
+#include "clientlogging.h"
+
 #include "config.h"
 #include "connection.h"
 #include "connection_edge.h"
@@ -238,9 +242,19 @@ circuit_receive_relay_cell(cell_t *cell, circuit_t *circ,
 
   /* not recognized. pass it on. */
   if (cell_direction == CELL_DIRECTION_OUT) {
+
+    /* CLIENTLOGGING: log cells going OUT 
+     */
+    cllog_log_cell(circ, cell, cell_direction, CELL_RELAY);
+
     cell->circ_id = circ->n_circ_id; /* switch it */
     chan = circ->n_chan;
   } else if (! CIRCUIT_IS_ORIGIN(circ)) {
+
+    /* CLIENTLOGGING: log cells going IN
+     */
+    cllog_log_cell(circ, cell, cell_direction, CELL_RELAY);
+
     cell->circ_id = TO_OR_CIRCUIT(circ)->p_circ_id; /* switch it */
     chan = TO_OR_CIRCUIT(circ)->p_chan;
   } else {
