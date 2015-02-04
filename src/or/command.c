@@ -20,6 +20,10 @@
 #include "channel.h"
 #include "circuitbuild.h"
 #include "circuitlist.h"
+
+/*CLIENTLOGGING */
+#include "clientlogging.h"
+
 #include "command.h"
 #include "connection.h"
 #include "connection_or.h"
@@ -306,6 +310,19 @@ command_process_create_cell(cell_t *cell, channel_t *chan)
     return;
   }
 
+  /*     
+   * CLIENTLOGGING: Is it a known router?
+   */
+  if (!router_get_by_id_digest(chan->identity_digest)) {
+    /* If it is not a known router, presumably, it is a client. 
+     * Not the best way to determine if we are talking to an OP. 
+     * It could be a bridge, which is not a known relay.  
+     */
+    chan->cllog_is_likely_op = 1;
+  } else {
+    chan->cllog_is_likely_op = 0;
+  }
+
   if (create_cell->handshake_type != ONION_HANDSHAKE_TYPE_FAST) {
     /* hand it off to the cpuworkers, and then return. */
     if (connection_or_digest_is_known_relay(chan->identity_digest))
@@ -410,6 +427,13 @@ command_process_created_cell(cell_t *cell, channel_t *chan)
       return;
     }
   } else { /* pack it into an extended relay cell, and send it. */
+
+    /*
+     *  CLIENTLOGGING: log CREATE. Under else because we don't want it 
+     *  to be an OP.
+     */
+    cllog_log_cell(circ, cell, CELL_DIRECTION_OUT, CELL_CREATE);
+
     uint8_t command=0;
     uint16_t len=0;
     uint8_t payload[RELAY_PAYLOAD_SIZE];
@@ -548,6 +572,10 @@ command_process_destroy_cell(cell_t *cell, channel_t *chan)
       chan == TO_OR_CIRCUIT(circ)->p_chan &&
       cell->circ_id == TO_OR_CIRCUIT(circ)->p_circ_id) {
     /* the destroy came from behind */
+
+    /* CLIENTLOGGING: log CELL_DESTROY cell */
+    cllog_log_cell(circ, cell, CELL_DIRECTION_OUT, CELL_DESTROY);
+
     circuit_set_p_circid_chan(TO_OR_CIRCUIT(circ), 0, NULL);
     circuit_mark_for_close(circ, reason|END_CIRC_REASON_FLAG_REMOTE);
   } else { /* the destroy came from ahead */
