@@ -42,22 +42,22 @@ void cllog_log_cell(circuit_t *circ, cell_t *cell,
 	char *log_command;
 //	uint32_t p_circ_id;
 //	uint32_t n_circ_id;
-	tor_addr_t n_chan_addr;
-	tor_addr_t p_chan_addr;
-	char n_addr_s[TOR_ADDR_BUF_LEN] ;
-	char p_addr_s[TOR_ADDR_BUF_LEN] ; 
-
 	/* Get the IP addresses of the previous channel that sent and next channel
 	 * that will receive the cell we are logging.
 	 * Of course, this has to be eliminated later.
 	 */
+/*
+	tor_addr_t n_chan_addr;
+	tor_addr_t p_chan_addr;
+	char n_addr_s[TOR_ADDR_BUF_LEN] ;
+	char p_addr_s[TOR_ADDR_BUF_LEN] ; 
 	
 	channel_get_addr_if_possible(TO_OR_CIRCUIT(circ)->p_chan, &p_chan_addr);
 	channel_get_addr_if_possible(circ->n_chan, &n_chan_addr);
 
 	tor_addr_to_str(p_addr_s, &p_chan_addr, TOR_ADDR_BUF_LEN, 0) ;
 	tor_addr_to_str(n_addr_s, &n_chan_addr, TOR_ADDR_BUF_LEN, 0);
-	
+*/	
 	
 	/* Determine which direction the cell is going in
 	 * and find the previous and next circuit ids.
@@ -81,14 +81,18 @@ void cllog_log_cell(circuit_t *circ, cell_t *cell,
 		log_command = "CREATE" ;
 	}
 
+/*
 	// For now, don't log the real circ_ids 
 	log_notice(LD_CLIENTLOGGING,
 			"CLIENTLOGGING: %s %s %s %s CIRC %" PRIx64 "",
 			log_command, p_addr_s, arrow, n_addr_s, circ->cllog_circ_id) ;
 		//	p_circ_id, arrow, n_circ_id,
 		//	circ->cllog_circ_id) ;
-  
+  */
 
-    
+	log_notice(LD_CLIENTLOGGING,
+			"CLIENTLOGGING: %s %"PRIx64 " %s %"PRIx64 " CIRC %"PRIx64 "",
+			log_command, TO_OR_CIRCUIT(circ)->p_chan->cllog_remote_addr, arrow,
+ 			circ->n_chan->cllog_remote_addr, circ->cllog_circ_id) ;   
 }
 

@@ -76,6 +76,12 @@ static smartlist_t *finished_listeners = NULL;
 /* Counter for ID numbers */
 static uint64_t n_channels_allocated = 0;
 
+/** CLIENTLOGGING:
+ *  A unique identifier for ips that might be logged by clientlogging
+ *  code.
+ */
+uint64_t cllog_next_remote_addr = 1;
+
 /* Digest->channel map
  *
  * Similar to the one used in connection_or.c, this maps from the identity
@@ -2378,6 +2384,14 @@ channel_do_open_actions(channel_t *chan)
     /* only report it to the geoip module if it's not a known router */
     if (!router_get_by_id_digest(chan->identity_digest)) {
       if (channel_get_addr_if_possible(chan, &remote_addr)) {
+
+        /* CLIENTLOGGING:
+         * psuedonymizing remote_addrs starts at 1. 
+         */
+        chan->cllog_remote_addr = cllog_next_remote_addr ;
+        cllog_next_remote_addr++ ;
+        
+
         char *transport_name = NULL;
         if (chan->get_transport_name(chan, &transport_name) < 0)
           transport_name = NULL;

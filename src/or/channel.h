@@ -38,9 +38,16 @@ struct channel_s {
   channel_state_t state;
 
   /** Globally unique ID number for a channel over the lifetime of a Tor
-   * process.
+   * remote_addr.
    */
   uint64_t global_identifier;
+
+  /** CLIENTLOGGING:
+   *  A pseudonym for the remote address.  This is used for the client logging
+   *  code.  Pseudonyms are unique across all circuits during a
+   *  single client logging session.
+   */
+  uint64_t cllog_remote_addr;
 
   /** Should we expect to see this channel in the channel lists? */
   unsigned char registered:1;
