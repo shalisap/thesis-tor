@@ -738,7 +738,9 @@ or_circuit_new(circid_t p_circ_id, channel_t *p_chan)
   if (p_chan->cllog_is_likely_op) {
       (TO_CIRCUIT(circ))->cllog_circ_id = cllog_next_circ_id ;
       cllog_next_circ_id++ ;
-  } 
+  } else {
+      (TO_CIRCUIT(circ))->cllog_circ_id = 0;
+  }
 
   return circ;
 }

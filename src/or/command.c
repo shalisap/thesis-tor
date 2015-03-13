@@ -371,6 +371,10 @@ command_process_create_cell(cell_t *cell, channel_t *chan)
     }
     memwipe(keys, 0, sizeof(keys));
   }
+  /*
+   *  CLIENTLOGGING: log CREATE
+   */ 
+   //cllog_log_cell(TO_CIRCUIT(circ), cell, CELL_DIRECTION_OUT, CELL_CREATE);
 }
 
 /** Process a 'created' <b>cell</b> that just arrived from <b>chan</b>.
@@ -432,7 +436,7 @@ command_process_created_cell(cell_t *cell, channel_t *chan)
      *  CLIENTLOGGING: log CREATE. Under else because we don't want it 
      *  to be an OP.
      */
-    cllog_log_cell(circ, cell, CELL_DIRECTION_OUT, CELL_CREATE);
+     cllog_log_cell(circ, cell, CELL_DIRECTION_OUT, CELL_CREATE);
 
     uint8_t command=0;
     uint16_t len=0;
@@ -535,6 +539,9 @@ command_process_relay_cell(cell_t *cell, channel_t *chan)
            direction==CELL_DIRECTION_OUT?"forward":"backward");
     circuit_mark_for_close(circ, -reason);
   }
+ /*  CLIENTLOGGING: log RELAY
+ */
+  cllog_log_cell(circ, cell, direction, CELL_RELAY);
 }
 
 /** Process a 'destroy' <b>cell</b> that just arrived from
@@ -574,7 +581,7 @@ command_process_destroy_cell(cell_t *cell, channel_t *chan)
     /* the destroy came from behind */
 
     /* CLIENTLOGGING: log CELL_DESTROY cell */
-    cllog_log_cell(circ, cell, CELL_DIRECTION_OUT, CELL_DESTROY);
+      cllog_log_cell(circ, cell, CELL_DIRECTION_OUT, CELL_DESTROY);
 
     circuit_set_p_circid_chan(TO_OR_CIRCUIT(circ), 0, NULL);
     circuit_mark_for_close(circ, reason|END_CIRC_REASON_FLAG_REMOTE);
