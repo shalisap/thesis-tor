@@ -298,18 +298,6 @@ command_process_create_cell(cell_t *cell, channel_t *chan)
     return;
   }
 
-  circ = or_circuit_new(cell->circ_id, chan);
-  circ->base_.purpose = CIRCUIT_PURPOSE_OR;
-  circuit_set_state(TO_CIRCUIT(circ), CIRCUIT_STATE_ONIONSKIN_PENDING);
-  create_cell = tor_malloc_zero(sizeof(create_cell_t));
-  if (create_cell_parse(create_cell, cell) < 0) {
-    tor_free(create_cell);
-    log_fn(LOG_PROTOCOL_WARN, LD_OR,
-           "Bogus/unrecognized create cell; closing.");
-    circuit_mark_for_close(TO_CIRCUIT(circ), END_CIRC_REASON_TORPROTOCOL);
-    return;
-  }
-
   /*     
    * CLIENTLOGGING: Is it a known router?
    */
@@ -321,6 +309,18 @@ command_process_create_cell(cell_t *cell, channel_t *chan)
     chan->cllog_is_likely_op = 1;
   } else {
     chan->cllog_is_likely_op = 0;
+  }
+
+  circ = or_circuit_new(cell->circ_id, chan);
+  circ->base_.purpose = CIRCUIT_PURPOSE_OR;
+  circuit_set_state(TO_CIRCUIT(circ), CIRCUIT_STATE_ONIONSKIN_PENDING);
+  create_cell = tor_malloc_zero(sizeof(create_cell_t));
+  if (create_cell_parse(create_cell, cell) < 0) {
+    tor_free(create_cell);
+    log_fn(LOG_PROTOCOL_WARN, LD_OR,
+           "Bogus/unrecognized create cell; closing.");
+    circuit_mark_for_close(TO_CIRCUIT(circ), END_CIRC_REASON_TORPROTOCOL);
+    return;
   }
 
   if (create_cell->handshake_type != ONION_HANDSHAKE_TYPE_FAST) {
@@ -374,7 +374,7 @@ command_process_create_cell(cell_t *cell, channel_t *chan)
   /*
    *  CLIENTLOGGING: log CREATE
    */ 
-   cllog_log_cell(TO_CIRCUIT(circ), cell, CELL_DIRECTION_OUT, CELL_CREATE);
+   cllog_log_create_cell(TO_CIRCUIT(circ), cell) ;
 }
 
 /** Process a 'created' <b>cell</b> that just arrived from <b>chan</b>.
