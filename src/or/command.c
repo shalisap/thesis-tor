@@ -374,7 +374,7 @@ command_process_create_cell(cell_t *cell, channel_t *chan)
   /*
    *  CLIENTLOGGING: log CREATE
    */ 
-   //cllog_log_cell(TO_CIRCUIT(circ), cell, CELL_DIRECTION_OUT, CELL_CREATE);
+   cllog_log_cell(TO_CIRCUIT(circ), cell, CELL_DIRECTION_OUT, CELL_CREATE);
 }
 
 /** Process a 'created' <b>cell</b> that just arrived from <b>chan</b>.
@@ -431,12 +431,6 @@ command_process_created_cell(cell_t *cell, channel_t *chan)
       return;
     }
   } else { /* pack it into an extended relay cell, and send it. */
-
-    /*
-     *  CLIENTLOGGING: log CREATE. Under else because we don't want it 
-     *  to be an OP.
-     */
-     cllog_log_cell(circ, cell, CELL_DIRECTION_OUT, CELL_CREATE);
 
     uint8_t command=0;
     uint16_t len=0;
