@@ -15,6 +15,11 @@ void cllog_log_create_cell(circuit_t *circ, cell_t *cell) {
             cell->command == CELL_CREATE_FAST ||
             cell->command == CELL_CREATE2) ;
 
+    /* Only log if the previous channel is a likely client.
+     */
+    if (!(CIRCUIT_IS_ORCIRC(circ)) || (circ->cllog_circ_id == 0) || 
+            !(get_options()->AllowClientLogging)) return ;
+
     tor_addr_t p_chan_addr;
     channel_get_addr_if_possible(TO_OR_CIRCUIT(circ)->p_chan, &p_chan_addr) ;
 
@@ -48,15 +53,9 @@ void cllog_log_cell(circuit_t *circ, cell_t *cell,
      * and if clientlogging is on, log the cell. 
      * circ->n_chan acts as a naive guard for channel_get_addr_if_possible
      */
-    
+
     if (!(CIRCUIT_IS_ORCIRC(circ)) || (circ->cllog_circ_id == 0) || 
             !(get_options()->AllowClientLogging) || !(circ->n_chan)) { 
-    /*  if (command == CELL_CREATE) {
-            log_notice(LD_CLIENTLOGGING,
-                "CLIENTLOGGING: FAILED CREATE CIRC %" PRIx64 "",
-                circ->cllog_circ_id);
-        }
-*/
         return;
     }
     
