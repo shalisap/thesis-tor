@@ -56,12 +56,6 @@ void cllog_log_cell(circuit_t *circ, cell_t *cell,
 
     if (!(CIRCUIT_IS_ORCIRC(circ)) || (circ->cllog_circ_id == 0) || 
             !(get_options()->AllowClientLogging) || !(circ->n_chan)) { 
-    /*  if (command == CELL_CREATE) {
-            log_notice(LD_CLIENTLOGGING,
-                "CLIENTLOGGING: FAILED CREATE CIRC %" PRIx64 "",
-                circ->cllog_circ_id);
-        }
-*/
         return;
     }
     
